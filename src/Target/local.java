@@ -100,9 +100,9 @@ public class local implements SipListener {
     public static boolean inPhoneCallProcess = false;
 
     
-    private static  String MyAddress = "192.168.0.181";
+    private static  String MyAddress;
 
-    private static  int MyPort = 6020;
+    private static  int MyPort ;
     
     public static String Callee="Gateway";
     
@@ -432,17 +432,17 @@ public class local implements SipListener {
           cseq += 1L;
           CSeqHeader cSeqHeader = headerFactory.createCSeqHeader(cseq, Request.INVITE);
           
-          javax.sip.address.Address fromAddress = addressFactory.createAddress("sip:Gateway@open-ims.test");
+          javax.sip.address.Address fromAddress = addressFactory.createAddress("sip:Gateway@192.168.0.180");
           
           FromHeader fromHeader = headerFactory.createFromHeader(fromAddress, "12345");
           
-          javax.sip.address.Address toAddress = addressFactory.createAddress("sip:PN1@open-ims.test");
+          javax.sip.address.Address toAddress = addressFactory.createAddress("sip:PN1@192.168.0.180");
 
           ToHeader toHeader = headerFactory.createToHeader(toAddress, null);
           
           MaxForwardsHeader maxForwards = headerFactory
             .createMaxForwardsHeader(70);
-          URI requestURI = addressFactory.createURI("sip:PN1@open-ims.test");
+          URI requestURI = addressFactory.createURI("sip:PN1@192.168.0.180");
           
           Request request = messageFactory.createRequest(requestURI, Request.INVITE, callIdHeader, cSeqHeader, fromHeader, toHeader, viaHeaders, maxForwards);
           
@@ -605,8 +605,8 @@ public class local implements SipListener {
 
 
 
-          String fromSipAddress = "open-ims.test";
-          String toSipAddress = "open-ims.test";
+          String fromSipAddress = "192.168.0.180";
+          String toSipAddress = "192.168.0.180";
           
 
 
@@ -853,8 +853,8 @@ public class local implements SipListener {
           
           ArrayList viaHeaders = new ArrayList();
           
-          ViaHeader viaHeader = headerFactory.createViaHeader(MyAddress, 
-        		  MyPort, 
+          ViaHeader viaHeader = headerFactory.createViaHeader(shoot.localIP, 
+        		  6020, 
             transport, null);
          
 
@@ -867,17 +867,17 @@ public class local implements SipListener {
           cseq += 1L;
           CSeqHeader cSeqHeader = headerFactory.createCSeqHeader(cseq, Request.INVITE);
           
-          javax.sip.address.Address fromAddress = addressFactory.createAddress("sip:Gateway@open-ims.test");
+          javax.sip.address.Address fromAddress = addressFactory.createAddress("sip:Gateway@192.168.0.180");
           
           FromHeader fromHeader = headerFactory.createFromHeader(fromAddress, "12345");
           
-          javax.sip.address.Address toAddress = addressFactory.createAddress("sip:PN1@open-ims.test");
+          javax.sip.address.Address toAddress = addressFactory.createAddress("sip:PN1@192.168.0.180");
 
           ToHeader toHeader = headerFactory.createToHeader(toAddress, null);
           
           MaxForwardsHeader maxForwards = headerFactory
             .createMaxForwardsHeader(70);
-          URI requestURI = addressFactory.createURI("sip:PN1@open-ims.test");
+          URI requestURI = addressFactory.createURI("sip:PN1@192.168.0.180");
           
           Request request = messageFactory.createRequest(requestURI, Request.INVITE, callIdHeader, cSeqHeader, fromHeader, toHeader, viaHeaders, maxForwards);
           
@@ -888,8 +888,8 @@ public class local implements SipListener {
          
           sdpData = "v=0\r\n"
                   + "o=4855 13760799956958020 13760799956958020"
-                  + " IN IP4  192.168.0.181\r\n" + "s=mysession session\r\n"
-                  + "p=+46 8 52018010\r\n" + "c=IN IP4  192.168.0.181\r\n"
+                  + " IN IP4  "+shoot.localIP+"\r\n" + "s=mysession session\r\n"
+                  + "p=+46 8 52018010\r\n" + "c=IN IP4  "+shoot.localIP+"\r\n"
                   + "t=0 0\r\n" /*+ "m=audio 6022 RTP/AVP 0 4 18\r\n"*/
 
                   // bandwith
@@ -906,6 +906,293 @@ public class local implements SipListener {
           byte[] contents = sdpData.getBytes();
         /*  byte[] contents = SDPsetting().getBytes();
 */
+          request.setContent(contents, ContentTypeHeader);
+          
+      /*    
+          if (Request.INVITE.equals("INVITE"))
+          {
+            Header AcceptContactH = headerFactory.createAcceptHeader("Accept-Contact", "*; mobility=\"fixed\"");
+            Header RejectContactH = headerFactory.createHeader("Reject-Contact", "*; mobility=\"mobile\"");
+            Header RequestDispositionH = headerFactory.createHeader("Request-Disposition", "no-fork");
+            request.addHeader(AcceptContactH);
+            request.addHeader(RejectContactH);
+            request.addHeader(RequestDispositionH);
+          }
+     */     
+          request.addHeader(contactH);
+          
+
+
+       //   request.addHeader(routeHeader);
+          
+          request.addHeader(callIdHeader);
+          
+          request.addHeader(cSeqHeader);
+          
+          request.addHeader(fromHeader);
+          
+          request.addHeader(toHeader);
+          
+          request.addHeader(maxForwardsHeader);
+          
+          request.addHeader(viaHeader);
+          
+
+
+
+          request.addHeader(ContentTypeHeader);
+          
+
+
+
+
+
+
+          javax.sip.address.Address fromNameAddress = addressFactory.createAddress(fromAddress.toString());
+          /* ++++++++++++++++++++++++++++++++++++++++++++
+           *                IMS headers
+           * ++++++++++++++++++++++++++++++++++++++++++++
+           */
+/*
+          HeaderFactoryImpl headerFactoryImpl = new HeaderFactoryImpl();
+          
+          AllowHeader allow1 = headerFactory.createAllowHeader(Request.INVITE);
+          request.addHeader(allow1);
+          AllowHeader allow2 = 
+            headerFactory.createAllowHeader("PRACK");
+          request.addHeader(allow2);
+          AllowHeader allow3 = 
+            headerFactory.createAllowHeader("UPDATE");
+          request.addHeader(allow3);
+          AllowHeader allow4 = 
+            headerFactory.createAllowHeader("ACK");
+          request.addHeader(allow4);
+          AllowHeader allow5 = 
+            headerFactory.createAllowHeader("CANCEL");
+          request.addHeader(allow5);
+          AllowHeader allow6 = 
+            headerFactory.createAllowHeader("BYE");
+          request.addHeader(allow6);
+          AllowHeader allow7 = 
+            headerFactory.createAllowHeader("REFER");
+          request.addHeader(allow7);
+          AllowHeader allow8 = 
+            headerFactory.createAllowHeader("NOTIFY");
+          request.addHeader(allow8);
+          
+          SupportedHeader supported1 = 
+            headerFactory.createSupportedHeader("100rel");
+          request.addHeader(supported1);
+          SupportedHeader supported2 = 
+            headerFactory.createSupportedHeader("preconditions");
+          request.addHeader(supported2);
+          SupportedHeader supported3 = 
+            headerFactory.createSupportedHeader("path");
+          request.addHeader(supported3);
+          
+          RequireHeader require1 = 
+            headerFactory.createRequireHeader("sec-agree");
+          request.addHeader(require1);
+          RequireHeader require2 = 
+            headerFactory.createRequireHeader("preconditions");
+          request.addHeader(require2);
+          
+          SecurityClientHeader secClient = 
+            headerFactoryImpl.createSecurityClientHeader();
+          secClient.setSecurityMechanism("ipsec-3gpp");
+          secClient.setAlgorithm("hmac-md5-96");
+          secClient.setEncryptionAlgorithm("des-cbc");
+          secClient.setSPIClient(10000);
+          secClient.setSPIServer(10001);
+          secClient.setPortClient(5063);
+          secClient.setPortServer(4166);
+          request.addHeader(secClient);
+          
+          PAccessNetworkInfoHeader accessInfo = 
+            headerFactoryImpl.createPAccessNetworkInfoHeader();
+          accessInfo.setAccessType("3GPP-UTRAN-TDD");
+          accessInfo.setUtranCellID3GPP("0123456789ABCDEF");
+          request.addHeader(accessInfo);
+          
+          PrivacyHeader privacy = headerFactoryImpl.createPrivacyHeader("header");
+          request.addHeader(privacy);
+          PrivacyHeader privacy2 = headerFactoryImpl.createPrivacyHeader("user");
+          request.addHeader(privacy2);
+          
+
+          PPreferredIdentityHeader preferredID = 
+            headerFactoryImpl.createPPreferredIdentityHeader(fromNameAddress);
+          request.addHeader(preferredID);
+          
+
+          PPreferredServiceHeader preferredService = 
+            headerFactoryImpl.createPPreferredServiceHeader();
+          preferredService.setApplicationIdentifiers("3gpp-service-ims.icis.mmtel");
+          request.addHeader(preferredService);
+          
+
+          PAssertedServiceHeader assertedService = 
+            headerFactoryImpl.createPAssertedServiceHeader();
+          assertedService.setApplicationIdentifiers("3gpp-service-ims.icis.mmtel");
+          request.addHeader(assertedService);
+          
+
+
+
+
+
+
+
+
+
+
+          String fromSipAddress = "192.168.0.180";
+          String toSipAddress = "192.168.0.180";
+          
+
+
+          PCalledPartyIDHeader calledPartyID = 
+            headerFactoryImpl.createPCalledPartyIDHeader(toAddress);
+          request.addHeader(calledPartyID);
+          
+
+          PVisitedNetworkIDHeader visitedNetworkID1 = 
+            headerFactoryImpl.createPVisitedNetworkIDHeader();
+          visitedNetworkID1.setVisitedNetworkID(fromSipAddress
+            .substring(fromSipAddress.indexOf("@") + 1));
+          PVisitedNetworkIDHeader visitedNetworkID2 = 
+            headerFactoryImpl.createPVisitedNetworkIDHeader();
+          visitedNetworkID2.setVisitedNetworkID(toSipAddress
+            .substring(toSipAddress.indexOf("@") + 1));
+          request.addHeader(visitedNetworkID1);
+          request.addHeader(visitedNetworkID2);
+          
+
+
+          PAssociatedURIHeader associatedURI1 = 
+            headerFactoryImpl.createPAssociatedURIHeader(toAddress);
+          PAssociatedURIHeader associatedURI2 = 
+            headerFactoryImpl.createPAssociatedURIHeader(fromNameAddress);
+          request.addHeader(associatedURI1);
+          request.addHeader(associatedURI2);
+          
+
+
+          PAssertedIdentityHeader assertedID = 
+            headerFactoryImpl.createPAssertedIdentityHeader(
+            addressFactory.createAddress(requestURI));
+          request.addHeader(assertedID);
+          
+          TelURL tel = addressFactory.createTelURL("+1-201-555-0123");
+          javax.sip.address.Address telAddress = addressFactory.createAddress(tel);
+          toAddress.setDisplayName(referto);
+          PAssertedIdentityHeader assertedID2 = 
+            headerFactoryImpl.createPAssertedIdentityHeader(telAddress);
+          request.addHeader(assertedID2);
+          
+
+
+          PChargingFunctionAddressesHeader chargAddr = 
+            headerFactoryImpl.createPChargingFunctionAddressesHeader();
+          chargAddr.addChargingCollectionFunctionAddress("PN1.ims.test");
+          chargAddr.addEventChargingFunctionAddress("testevent");
+          request.addHeader(chargAddr);
+          
+
+          PChargingVectorHeader chargVect = 
+            headerFactoryImpl.createChargingVectorHeader("icid");
+          chargVect.setICIDGeneratedAt("icidhost");
+          chargVect.setOriginatingIOI("origIOI");
+          chargVect.setTerminatingIOI("termIOI");
+          request.addHeader(chargVect);
+          
+
+          PMediaAuthorizationHeader mediaAuth1 = 
+            headerFactoryImpl.createPMediaAuthorizationHeader("13579bdf");
+          PMediaAuthorizationHeader mediaAuth2 = 
+            headerFactoryImpl.createPMediaAuthorizationHeader("02468ace");
+          request.addHeader(mediaAuth1);
+          request.addHeader(mediaAuth2);
+          
+
+
+          PathHeader path1 = 
+            headerFactoryImpl.createPathHeader(fromNameAddress);
+          PathHeader path2 = 
+            headerFactoryImpl.createPathHeader(toAddress);
+          request.addHeader(path1);
+          request.addHeader(path2);
+          
+*/
+
+
+
+
+
+
+          inviteTidClient = sipProvider.getNewClientTransaction(request);
+          
+
+
+          inviteTidClient.sendRequest();
+          if (Request.INVITE.equals("REGISTER")) {
+            dialog = inviteTidClient.getDialog();
+          } else if (Request.INVITE.equals("INVITE")) {
+            dialogCall = inviteTidClient.getDialog();
+            System.out.println("DDDdialogCallinviteTidClient.getDialog()"+dialogCall);
+          }
+        }
+        catch (Exception e)
+        {
+          e.printStackTrace();
+        }
+      }
+public static void SendInvitetest() {
+    	
+        try
+        {
+        	
+        	
+          String transport = "udp";
+          
+          ArrayList viaHeaders = new ArrayList();
+          
+          ViaHeader viaHeader = headerFactory.createViaHeader(MyAddress, 
+        		  MyPort, 
+            transport, null);
+         
+
+          viaHeaders.add(viaHeader);        
+
+          MaxForwardsHeader maxForwardsHeader = headerFactory.createMaxForwardsHeader(70);
+
+          CallIdHeader callIdHeader = sipProvider.getNewCallId();
+
+          cseq += 1L;
+          CSeqHeader cSeqHeader = headerFactory.createCSeqHeader(cseq, Request.INVITE);
+          
+          javax.sip.address.Address fromAddress = addressFactory.createAddress("sip:Gateway@192.168.0.180");
+          
+          FromHeader fromHeader = headerFactory.createFromHeader(fromAddress, "12345");
+          
+          javax.sip.address.Address toAddress = addressFactory.createAddress("sip:PN1@192.168.0.180");
+
+          ToHeader toHeader = headerFactory.createToHeader(toAddress, null);
+          
+          MaxForwardsHeader maxForwards = headerFactory
+            .createMaxForwardsHeader(70);
+          URI requestURI = addressFactory.createURI("sip:PN1@192.168.0.180");
+          
+          Request request = messageFactory.createRequest(requestURI, Request.INVITE, callIdHeader, cSeqHeader, fromHeader, toHeader, viaHeaders, maxForwards);
+          
+       //   javax.sip.address.Address routeaddress = addressFactory.createAddress("sip:orig@163.17.21.88:5060;lr");
+      //    RouteHeader routeHeader = headerFactory.createRouteHeader(routeaddress);
+          
+          ContentTypeHeader ContentTypeHeader = headerFactory.createContentTypeHeader("application", "sdp");
+      
+        //  byte[] contents = sdpData.getBytes();
+          byte[] contents = SDPsetting().getBytes();
+
           request.setContent(contents, ContentTypeHeader);
           
       /*    
@@ -1043,8 +1330,8 @@ public class local implements SipListener {
 
 
 
-          String fromSipAddress = "open-ims.test";
-          String toSipAddress = "open-ims.test";
+          String fromSipAddress = "192.168.0.180";
+          String toSipAddress = "192.168.0.180";
           
 
 
@@ -1145,7 +1432,6 @@ public class local implements SipListener {
         }
       }
     
-    
     public void sendingRequest(String CseqMethod, String refTo)
     {
       try
@@ -1174,11 +1460,11 @@ public class local implements SipListener {
         cseq += 1L;
         CSeqHeader cSeqHeader = headerFactory.createCSeqHeader(cseq, CseqMethod);
         
-        javax.sip.address.Address fromAddress = addressFactory.createAddress("sip:" + Referee + "@open-ims.test");
+        javax.sip.address.Address fromAddress = addressFactory.createAddress("sip:" + Referee + "@192.168.0.180");
         
         FromHeader fromHeader = headerFactory.createFromHeader(fromAddress, "12345");
         
-        javax.sip.address.Address toAddress = addressFactory.createAddress("sip:" + refTo + "@open-ims.test");
+        javax.sip.address.Address toAddress = addressFactory.createAddress("sip:" + refTo + "@192.168.0.180");
         
 
 
@@ -1192,7 +1478,7 @@ public class local implements SipListener {
 
         MaxForwardsHeader maxForwards = headerFactory
           .createMaxForwardsHeader(70);
-        URI requestURI = addressFactory.createURI("sip:" + refTo + "@open-ims.test");
+        URI requestURI = addressFactory.createURI("sip:" + refTo + "@192.168.0.180");
         
         Request request = messageFactory.createRequest(requestURI, CseqMethod, callIdHeader, cSeqHeader, fromHeader, toHeader, viaHeaders, maxForwards);
         
@@ -1335,8 +1621,8 @@ public class local implements SipListener {
 
 
 
-        String fromSipAddress = "open-ims.test";
-        String toSipAddress = "open-ims.test";
+        String fromSipAddress = "192.168.0.180";
+        String toSipAddress = "192.168.0.180";
         
 
 
@@ -1442,7 +1728,7 @@ public class local implements SipListener {
       try
       {
         String fromName = Referee;
-        String fromSipAddress = "open-ims.test";
+        String fromSipAddress = "192.168.0.180";
         String fromDisplayName = Referee;
         
 
@@ -1713,8 +1999,8 @@ public class local implements SipListener {
             dialogCall.sendAck(ackRequest);
             
             
-            new PCS_RTP_Caller().Port();
-            new PCS_RTP_Caller().Media();
+         //   new PCS_RTP_Caller().Port();
+         //   new PCS_RTP_Caller().Media();
           //  new PCS_RTP_Caller().addNewParticipant(remoteIP, remoteRtpPort, remoteRtcpPort, localRtpPort, localRtcpPort);
             //new PCS_RTP_Caller().startTalking();
             
@@ -1802,7 +2088,7 @@ public class local implements SipListener {
             		   
                        //reinv
                        System.out.println("NNNNNNNNNNDDDDDDDDNNNN"+shoot.referto);
-                       Shootisttest.sendingRequest("INVITE", shoot.referto);
+                     //  Shootisttest.sendingRequest("INVITE", shoot.referto);
                     
                        System.out.println("NNNNNNNNNNNNNNNNNNNNN"+shoot.set);
                        
@@ -1920,7 +2206,7 @@ public class local implements SipListener {
            cseq += 1L;
            CSeqHeader cSeqHeader = headerFactory.createCSeqHeader(cseq, "REGISTER");
            
-           javax.sip.address.Address fromAddress = addressFactory.createAddress("sip:"+Callee+"@open-ims.test");
+           javax.sip.address.Address fromAddress = addressFactory.createAddress("sip:"+Callee+"@192.168.0.180");
            
            FromHeader fromHeader = headerFactory.createFromHeader(fromAddress, "12345");
            
@@ -1936,7 +2222,7 @@ public class local implements SipListener {
 
            MaxForwardsHeader maxForwards = headerFactory
              .createMaxForwardsHeader(70);
-           URI requestURI = addressFactory.createURI("sip:open-ims.test");
+           URI requestURI = addressFactory.createURI("sip:192.168.0.180");
            Request request = messageFactory.createRequest(requestURI, 
              "REGISTER", callIdHeader, cSeqHeader, fromHeader, 
              toHeader, viaHeaders, maxForwards);
@@ -2307,22 +2593,22 @@ public class local implements SipListener {
             headerFactory = sipFactory.createHeaderFactory();
             addressFactory = sipFactory.createAddressFactory();
             messageFactory = sipFactory.createMessageFactory();
-            udpListeningPoint = sipStack.createListeningPoint("192.168.0.181",
+            udpListeningPoint = sipStack.createListeningPoint(shoot.localIP,
             		6020, "udp");
             sipProvider = sipStack.createSipProvider(udpListeningPoint);
             local listener = this;
             sipProvider.addSipListener(listener);
            
             String fromName = Callee;
-            String fromSipAddress = "open-ims.test";  
+            String fromSipAddress = "192.168.0.180";  
             String toUser = Callee;
-            String toSipAddress = "open-ims.test";
+            String toSipAddress = "192.168.0.180";
             
                    
          // Create ViaHeaders
 
             ArrayList viaHeaders = new ArrayList();
-            ViaHeader viaHeader = headerFactory.createViaHeader(MyAddress,
+            ViaHeader viaHeader = headerFactory.createViaHeader(shoot.localIP,
                     sipProvider.getListeningPoint(transport).getPort(),
                     transport, null);
        
@@ -2378,7 +2664,7 @@ public class local implements SipListener {
             
         /*    
             //Create router headers
-            Address routeaddress = addressFactory.createAddress("sip:orig@scscf.open-ims.test:5060;lr");
+            Address routeaddress = addressFactory.createAddress("sip:orig@scscf.192.168.0.180:5060;lr");
             RouteHeader routeHeader = this.headerFactory.createRouteHeader(routeaddress);
 			request.addHeader(routeHeader);
 			*/
@@ -2389,9 +2675,9 @@ public class local implements SipListener {
             contactUrl.setLrParam();
          */
             // Create contact headers
-			String host = MyAddress;
+			String host = shoot.localIP;
             	//Header contactH;
-            			contactH = headerFactory.createHeader("Contact","<sip:"+Callee+"@"+MyAddress+":"+MyPort+";transport=udp>;expires=60;+g.oma.sip-im;language=\"en,fr\";+g.3gpp.smsip;+g.oma.sip-im.large-message;audio;+g.3gpp.icsi-ref=\"urn%3Aurn-7%3A3gpp-application.ims.iari.gsma-vs\";+g.3gpp.cs-voice");
+            			contactH = headerFactory.createHeader("Contact","<sip:"+Callee+"@"+shoot.localIP+":"+MyPort+";transport=udp>;expires=60;+g.oma.sip-im;language=\"en,fr\";+g.3gpp.smsip;+g.oma.sip-im.large-message;audio;+g.3gpp.icsi-ref=\"urn%3Aurn-7%3A3gpp-application.ims.iari.gsma-vs\";+g.3gpp.cs-voice");
                         //contactH = headerFactory.createHeader("Contact","<sip:sis@163.17.21.86:5020;transport=udp>;expires=60;+g.oma.sip-im;language=\"en,fr\";+g.3gpp.smsip;+g.oma.sip-im.large-message");
                         request.addHeader(contactH);
                         
@@ -2722,9 +3008,9 @@ public class local implements SipListener {
             sipProvider.addSipListener(listener);
            
             String fromName = Callee;
-            String fromSipAddress = "open-ims.test";  
+            String fromSipAddress = "192.168.0.180";  
             String toUser = Callee;
-            String toSipAddress = "open-ims.test";
+            String toSipAddress = "192.168.0.180";
             
                    
          // Create ViaHeaders
@@ -2786,7 +3072,7 @@ public class local implements SipListener {
             
         /*    
             //Create router headers
-            Address routeaddress = addressFactory.createAddress("sip:orig@scscf.open-ims.test:5060;lr");
+            Address routeaddress = addressFactory.createAddress("sip:orig@scscf.192.168.0.180:5060;lr");
             RouteHeader routeHeader = this.headerFactory.createRouteHeader(routeaddress);
 			request.addHeader(routeHeader);
 			*/
@@ -3081,7 +3367,7 @@ public class local implements SipListener {
 	      String nonce = ah_c.getNonce();
 	      String algrm = ah_c.getAlgorithm();
 	      String realm = ah_c.getRealm();
-	      String username = Callee+"@open-ims.test";
+	      String username = Callee+"@192.168.0.180";
 	      String password = Callee;
 	      
 	      MessageDigest mdigest = MessageDigest.getInstance(algrm);

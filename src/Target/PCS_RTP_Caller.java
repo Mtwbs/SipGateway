@@ -32,6 +32,8 @@ import javax.sound.sampled.Port.Info;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 import javax.swing.JOptionPane;
+
+
 import jlibrtp.DataFrame;
 import jlibrtp.Participant;
 import jlibrtp.RTPAppIntf;
@@ -183,7 +185,10 @@ public class PCS_RTP_Caller
         if (PCS_RTP_Caller.ui.getButtonText() == "Dial")
         {
       
-          new local().SendRedirect();
+        //  new local().SendRedirect();
+        //	PCS_RTP_Caller.this.test.SendInvite();
+       //   new test().SendInvite();
+        	local.SendInvite();
           PCS_RTP_Caller.ui.setButtonText("End");
          
           PCS_RTP_Caller.ui.setStateText("Running");
@@ -334,8 +339,9 @@ public class PCS_RTP_Caller
   
   public static void main(String[] args)
   {
-	  new local().init();
-    
+	 
+	  new Shootisttest().init();
+	//  new test().init();
     try
     {
         Thread.sleep(1000);
@@ -344,7 +350,7 @@ public class PCS_RTP_Caller
     {
         e.printStackTrace();
     }
-    new Shootisttest().init();
+    new local().init();
     
     //new Shootisttest().init2();
     new Shootisttest().referstart();

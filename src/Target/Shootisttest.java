@@ -183,8 +183,8 @@ public class Shootisttest implements SipListener {
 			    MyPort = getstun.ma.getPort();
 			    MyAddress = getstun.ma.getAddress().toString();
 			    
-			    System.out.println("MyPort"+MyPort);
-			    System.out.println("MyAddress"+MyAddress);
+			    System.out.println("MyPort2"+MyPort);
+			    System.out.println("MyAddress2"+MyAddress);
 			  }
     
     public void getlocalIP()
@@ -449,7 +449,7 @@ public class Shootisttest implements SipListener {
     	          System.out.println("TargetDialog setting false!!!!!  dialogCallId():" + dialogCall.getCallId() + "  TargetDialogID: " + tempTargetDialogID);
     	        }
     	        */
-    		    //  localtest.SendRedirect();
+    		    //  localtest.SendRedirect();    	         
     	        local.SendInvite();
 
     	      return 1;
@@ -1751,8 +1751,8 @@ public class Shootisttest implements SipListener {
                dialogCall.sendAck(ackRequest);
                
                
-               new PCS_RTP_Caller().Port();
-               new PCS_RTP_Caller().Media();
+             //  new PCS_RTP_Caller().Port();
+             //  new PCS_RTP_Caller().Media();
                set=4;
                System.out.println("Sending ACK"+set+"Sending ACK");
                
@@ -2234,13 +2234,13 @@ public class Shootisttest implements SipListener {
 
 
 
-        Origin origin = sdpFactory.createOrigin("UA", 123456L, 1234567L, "IN", "IP4", IPcallee);
+        Origin origin = sdpFactory.createOrigin("UA", 123456L, 1234567L, "IN", "IP4", MyAddress);
         
 
 
 
 
-        Connection connection = sdpFactory.createConnection("IN", "IP4", IPcallee);
+        Connection connection = sdpFactory.createConnection("IN", "IP4", MyAddress);
         
 
 
@@ -2398,6 +2398,7 @@ public class Shootisttest implements SipListener {
     	
         try
         {
+       
           new Shootisttest().STUNPut();
           new Shootisttest().getlocalIP();
         }
@@ -2538,7 +2539,7 @@ public class Shootisttest implements SipListener {
             // Create contact headers
 			String host = MyAddress;
             	//Header contactH;
-            			contactH = headerFactory.createHeader("Contact","<sip:"+Callee+"@"+MyAddress+":"+MyPort+";transport=udp>;expires=60;+g.oma.sip-im;language=\"en,fr\";+g.3gpp.smsip;+g.oma.sip-im.large-message;audio;+g.3gpp.icsi-ref=\"urn%3Aurn-7%3A3gpp-application.ims.iari.gsma-vs\";+g.3gpp.cs-voice");
+            			contactH = headerFactory.createHeader("Contact","<sip:"+Callee+"@"+MyAddress+":"+MyPort+";q=0.8;transport=udp>;expires=60;+g.oma.sip-im;language=\"en,fr\";+g.3gpp.smsip;+g.oma.sip-im.large-message;audio;+g.3gpp.icsi-ref=\"urn%3Aurn-7%3A3gpp-application.ims.iari.gsma-vs\";+g.3gpp.cs-voice");
                         //contactH = headerFactory.createHeader("Contact","<sip:sis@163.17.21.86:5020;transport=udp>;expires=60;+g.oma.sip-im;language=\"en,fr\";+g.3gpp.smsip;+g.oma.sip-im.large-message");
                         request.addHeader(contactH);
                         
